@@ -1,23 +1,29 @@
 #include <cassert>
 #include <cstdlib>
+#include <algorithm>
+#include <functional>
 #include <iostream>
-#include <string>
-#include <vector>
-#include <tuple>
 
+#include "commontypes.h"
 // ("",  '.') -> [""]
 // ("11", '.') -> ["11"]
 // ("..", '.') -> ["", "", ""]
 // ("11.", '.') -> ["11", ""]
 // (".11", '.') -> ["", "11"]
 // ("11.22", '.') -> ["11", "22"]
-auto split(const std::string &str, char d)
-{
-    std::vector<std::string> r;
 
-    std::string::size_type start = 0;
-    std::string::size_type stop = str.find_first_of(d);
-    while(stop != std::string::npos)
+
+
+
+
+auto split(const StdStrT &str, char d)
+{
+    StdVectorT<StdStrT> r;
+
+    StdStrT::size_type start = 0;
+    StdStrT::size_type stop = str.find_first_of(d);
+
+    while(stop != StdStrT::npos)
     {
         r.push_back(str.substr(start, stop - start));
 
@@ -30,31 +36,55 @@ auto split(const std::string &str, char d)
     return r;
 }
 
-auto make_ip_tuple(std::string n1,std::string n2, std::string n3, std::string n4){
-	return std::make_tuple(n1,n2,n3,n4);
+//some filters to work
+bool f_byFirst(const StdVectorT<StdStrT>& elm){
+    std::cout << "byFirst applying"<< *elm.begin()<<std::endl;
+    return true;
 }
+//~some filters to work
 
-int main(int argc [[gnu::unused]], char const *argv[] [[gnu::unused]]){
-    
+// will produce another vector, applying some function
+// returning if all ok in vector
+auto applyable_filter(std::function<bool (const StdVectorT<StdStrT>& elm)> f,IpVectorT ip_vct){
+    IpVectorT ip_product;
 
+    for(IpVectorT::const_iterator ip = ip_vct.cbegin(); ip != ip_vct.cend(); ++ip){
+        f(*ip->begin());
+
+    }
+    return ip_product;
+};
+//auto filter_vector();
+
+struct lexicographical_desc{
+    inline bool operator() (const StdVectorT<StdStrT>& fst, const StdVectorT<StdStrT>& snd){
+        // all vector to compare
+        return !(std::lexicographical_compare(fst.begin(),fst.end(),snd.begin(),snd.end()));
+    }
+};
+
+int main(int argc [[gnu::unused]], char const *argv[] ){
     try
     {
-        std::vector<std::vector<std::string>> ip_pool;
+        IpVectorT ip_pool; // already contains vector of elements
 
-        for(std::string line; std::getline(std::cin, line);)
+        for(StdStrT line; std::getline(std::cin, line);)
         {
             auto v = split(line, '\t');
             ip_pool.push_back(split(v.at(0), '.'));
-        }
+        };
 
-        // TODO reverse lexicographically sort
-	
-	std::vector<std::tuple<std::string, std::string, std::string> > tuple_pool;
+        std::sort(ip_pool.begin(),ip_pool.end(),lexicographical_desc()); // some lexicographical desc. sorting
+
+
+    // TODO reverse lexicographically sort
+        std::function<bool (const StdVectorT<StdStrT>& elm)> func_by1 = f_byFirst;
+        applyable_filter(func_by1, ip_pool);
 
 	//
 
 	// just  printing vector out
-        for(std::vector<std::vector<std::string> >::const_iterator ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
+        for(IpVectorT::const_iterator ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
         {
             for(auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part)
             {
