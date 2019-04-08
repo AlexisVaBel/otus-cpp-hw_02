@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
 
-
 if ($ENV{TRAVIS_BUILD_NUMBER})
  project(ip_filter VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
 else ($ENV{TRAVIS_BUILD_NUMBER})
@@ -9,6 +8,7 @@ else ($ENV{TRAVIS_BUILD_NUMBER})
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Wpedantic -Wextra")
 
 include_directories(".")
 include_directories("./io")

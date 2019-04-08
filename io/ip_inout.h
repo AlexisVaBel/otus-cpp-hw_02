@@ -67,8 +67,8 @@ void print_vct_of_vcts_out(IpVectorsT ip_pool){
 }
 
 
-void print_vct_out(StdVectorT<StdStrT> ip_pool){
-    for(StdVectorT<StdStrT>::const_iterator ip_part = ip_pool.cbegin(); ip_part != ip_pool.cend(); ++ip_part){
+void print_vct_out(IpVectorT ip_pool){
+    for(IpVectorT::const_iterator ip_part = ip_pool.cbegin(); ip_part != ip_pool.cend(); ++ip_part){
         if (ip_part != ip_pool.cbegin()){
             std::cout << ".";
 

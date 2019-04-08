@@ -12,7 +12,7 @@
 
 
 
-int main(int argc [[gnu::unused]], char const *argv[] ){
+int main(int argc , char const *argv[] ){
     try    {
         //ip pool for lexicographical sort
         // TODO reverse lexicographically sort

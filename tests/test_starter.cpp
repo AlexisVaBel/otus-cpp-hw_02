@@ -9,21 +9,44 @@
 
 BOOST_AUTO_TEST_SUITE(ip_sort_test_suite)
 
+
+bool check_vector_of_vector_equal(IpVectorsT& vct1, IpVectorsT& vct2){
+    if(vct1.size() == vct2.size()){
+        for(uint i = 0; i < vct1.size(); i++){
+            if(!std::equal(vct1.at(i).begin(), vct1.at(i).end(),vct2.at(i).begin())){
+                std::cout << "missmatcg in elm comparison " <<std::endl;
+                print_vct_out(vct1.at(i));
+                std::cout << "---------" <<std::endl;
+                print_vct_out(vct2.at(i));
+                return false;
+            }
+        };
+        return true;
+    };
+    std::cout << "diff in size " <<std::endl;
+    return false;
+}
+
 BOOST_AUTO_TEST_CASE(ip_sort_test_sorting){
 
-    IpVectorsT ip_pool_base{IpVectorT{"222.82_.198.61"},IpVectorT{"222.173.235.246"},IpVectorT{"222.130.177.64"}};
+    IpVectorsT ip_pool_base{IpVectorT{"222.-82.198.-61"},IpVectorT{"222.173.235.246"},IpVectorT{"222.130.177.-64"}};
 
-    IpVectorsT ip_pool_sorted_desc{IpVectorT{"222.173.235.246"},IpVectorT{"222.130.177.64"},IpVectorT{"222.82.198.61"}};
+    IpVectorsT ip_pool_sorted_desc{IpVectorT{"222.173.235.246"},IpVectorT{"222.130.177.-64"},IpVectorT{"222.-82.198.-61"}};
 
+    IpVectorsT ip_pool_sorted_desc_no_helping{IpVectorT{"222.173.235.246"},IpVectorT{"222.130.177.64"},IpVectorT{"222.82.198.61"}};
+    // check not equals
+    BOOST_CHECK(!check_vector_of_vector_equal(ip_pool_base,ip_pool_sorted_desc));
 
-    BOOST_CHECK(!std::equal(ip_pool_base.begin(), ip_pool_base.end(), ip_pool_sorted_desc.begin()));
     std::sort(ip_pool_base.begin(),ip_pool_base.end(),lexicographical_desc_vct());
-    IpVectorsT ip_pool_working = getUnPrependedVector(ip_pool_base);
+    // check sorted with helping elements
+    BOOST_CHECK(check_vector_of_vector_equal(ip_pool_base,ip_pool_sorted_desc));
 
-    BOOST_CHECK(std::equal(ip_pool_working.begin(), ip_pool_working.end(), ip_pool_sorted_desc.begin()));
+    IpVectorsT ip_pool_working  = getUnPrependedVector(ip_pool_base);
 
-//    std::equal()
-    // print_vct_out(ip_pool_working);
+
+    // removed helping elements and sorted
+    BOOST_CHECK(check_vector_of_vector_equal(ip_pool_working,ip_pool_sorted_desc_no_helping));
+
     // 222.173.235.246
     // 222.130.177.64
     // 222.82.198.61
