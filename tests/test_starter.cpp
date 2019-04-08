@@ -35,6 +35,7 @@ BOOST_AUTO_TEST_CASE(ip_sort_test_sorting){
 
     IpVectorsT ip_pool_sorted_desc_no_helping{IpVectorT{"222.173.235.246"},IpVectorT{"222.130.177.64"},IpVectorT{"222.82.198.61"}};
     // check not equals
+    std::cout << "Check missmathc vectors of vectors"<< std::endl;
     BOOST_CHECK(!check_vector_of_vector_equal(ip_pool_base,ip_pool_sorted_desc));
 
     std::sort(ip_pool_base.begin(),ip_pool_base.end(),lexicographical_desc_vct());

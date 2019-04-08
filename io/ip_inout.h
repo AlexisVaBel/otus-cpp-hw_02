@@ -19,7 +19,7 @@ inline StdStrT prependStr(StdStrT prepStr,StdStrT str){
 }
 
 auto split(const StdStrT &str, char d){
-    StdVectorT<StdStrT> r;
+    IpVectorT r;
     StdStrT::size_type start = 0;
     StdStrT::size_type stop = str.find_first_of(d);
     StdStrT tmp;

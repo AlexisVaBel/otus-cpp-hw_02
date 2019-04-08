@@ -4,7 +4,7 @@
 #include "../commontypes.h"
 
 struct lexicographical_desc_vct{
-    inline bool operator() (const StdVectorT<StdStrT>& fst, const StdVectorT<StdStrT>& snd){
+    inline bool operator() (const IpVectorT& fst, const IpVectorT& snd){
         return !(std::lexicographical_compare(fst.begin(),fst.end(),snd.begin(),snd.end()));
     }
 };
