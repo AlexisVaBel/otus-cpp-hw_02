@@ -5,16 +5,7 @@
 #include <iostream>
 
 #include "commontypes.h"
-// ("",  '.') -> [""]
-// ("11", '.') -> ["11"]
-// ("..", '.') -> ["", "", ""]
-// ("11.", '.') -> ["11", ""]
-// (".11", '.') -> ["", "11"]
-// ("11.22", '.') -> ["11", "22"]
-
-
-
-
+#include "ip_sort_filter.h"
 
 auto split(const StdStrT &str, char d)
 {
@@ -22,82 +13,84 @@ auto split(const StdStrT &str, char d)
 
     StdStrT::size_type start = 0;
     StdStrT::size_type stop = str.find_first_of(d);
-
+    StdStrT tmp;
     while(stop != StdStrT::npos)
     {
-        r.push_back(str.substr(start, stop - start));
+        tmp = str.substr(start, stop - start);
+        if(tmp.size() < 3){
+            auto addCnt = 3 - tmp.size();
+            while(addCnt > 0){
+                addCnt--;
+                tmp=CH_FOR_SORT+tmp;
+            }
+
+        }
+        r.push_back(tmp);
 
         start = stop + 1;
         stop = str.find_first_of(d, start);
     }
+    tmp = str.substr(start);
 
-    r.push_back(str.substr(start));
+    if(tmp.size() < 3){
+        auto addCnt = 3 - tmp.size();
+        while(addCnt > 0){
+            addCnt--;
+            tmp=CH_FOR_SORT+tmp;
+        }
+
+    }
+    r.push_back(tmp);
 
     return r;
 }
 
-//some filters to work
-bool f_byFirst(const StdVectorT<StdStrT>& elm){
-    std::cout << "byFirst applying"<< *elm.begin()<<std::endl;
-    return true;
-}
-//~some filters to work
 
-// will produce another vector, applying some function
-// returning if all ok in vector
-auto applyable_filter(std::function<bool (const StdVectorT<StdStrT>& elm)> f,IpVectorT ip_vct){
-    IpVectorT ip_product;
 
-    for(IpVectorT::const_iterator ip = ip_vct.cbegin(); ip != ip_vct.cend(); ++ip){
-        f(*ip->begin());
 
-    }
-    return ip_product;
-};
-//auto filter_vector();
-
-struct lexicographical_desc{
+struct lexicographical_desc_vct{
     inline bool operator() (const StdVectorT<StdStrT>& fst, const StdVectorT<StdStrT>& snd){
-        // all vector to compare
         return !(std::lexicographical_compare(fst.begin(),fst.end(),snd.begin(),snd.end()));
     }
 };
+
+
+void print_vct_out(IpVectorT ip_pool){
+    for(IpVectorT::const_iterator ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
+    {
+        for(auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part)
+        {
+            if (ip_part != ip->cbegin())
+            {
+                std::cout << ".";
+
+            }
+            std::cout << *ip_part;
+        }
+        std::cout << std::endl;
+    }
+}
 
 int main(int argc [[gnu::unused]], char const *argv[] ){
     try
     {
         IpVectorT ip_pool; // already contains vector of elements
 
+
         for(StdStrT line; std::getline(std::cin, line);)
         {
             auto v = split(line, '\t');
             ip_pool.push_back(split(v.at(0), '.'));
-        };
-
-        std::sort(ip_pool.begin(),ip_pool.end(),lexicographical_desc()); // some lexicographical desc. sorting
-
-
-    // TODO reverse lexicographically sort
-        std::function<bool (const StdVectorT<StdStrT>& elm)> func_by1 = f_byFirst;
-        applyable_filter(func_by1, ip_pool);
-
-	//
-
-	// just  printing vector out
-        for(IpVectorT::const_iterator ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
-        {
-            for(auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part)
-            {
-                if (ip_part != ip->cbegin())
-                {
-                    std::cout << ".";
-
-                }
-                std::cout << *ip_part;
-            }
-            std::cout << std::endl;
         }
 
+        std::sort(ip_pool.begin(),ip_pool.end(),lexicographical_desc_vct()); // some lexicographical desc. sorting
+
+    // TODO reverse lexicographically sort        
+        auto byFirst = applyable_filter(f_byFirst_One, ip_pool);
+        auto by46And70 = applyable_filter(f_byFirst46_Second70, ip_pool);
+	//
+	// just  printing vector out
+        print_vct_out(ip_pool);
         // 222.173.235.246
         // 222.130.177.64
         // 222.82.198.61
@@ -108,6 +101,7 @@ int main(int argc [[gnu::unused]], char const *argv[] ){
 
         // TODO filter by first byte and output
         // ip = filter(1)
+        print_vct_out(byFirst);
 
         // 1.231.69.33
         // 1.87.203.225
@@ -117,7 +111,7 @@ int main(int argc [[gnu::unused]], char const *argv[] ){
 
         // TODO filter by first and second bytes and output
         // ip = filter(46, 70)
-
+//        print_vct_out(by46And70);
         // 46.70.225.39
         // 46.70.147.26
         // 46.70.113.73
@@ -140,26 +134,7 @@ int main(int argc [[gnu::unused]], char const *argv[] ){
         // 46.223.254.56
         // 46.223.254.56
         // 46.182.19.219
-        // 46.161.63.66
-        // 46.161.61.51
-        // 46.161.60.92
-        // 46.161.60.35
-        // 46.161.58.202
-        // 46.161.56.241
-        // 46.161.56.203
-        // 46.161.56.174
-        // 46.161.56.106
-        // 46.161.56.106
-        // 46.101.163.119
-        // 46.101.127.145
-        // 46.70.225.39
-        // 46.70.147.26
-        // 46.70.113.73
-        // 46.70.29.76
-        // 46.55.46.98
-        // 46.49.43.85
-        // 39.46.86.85
-        // 5.189.203.46
+
     }
     catch(const std::exception &e)
     {
@@ -168,3 +143,4 @@ int main(int argc [[gnu::unused]], char const *argv[] ){
 
     return 0;
 }
+
