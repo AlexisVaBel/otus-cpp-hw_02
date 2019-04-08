@@ -11,9 +11,12 @@ using StdStrT    = std::string;
 template <typename T>
 using StdVectorT = std::vector<T>;
 
-using IpVectorT  = std::vector<std::vector<StdStrT>>;
+using IpVectorT     = std::vector<StdStrT>;
+using IpVectorsT    = std::vector<std::vector<StdStrT>>;
 
 //
-const char * CH_FOR_SORT = "-";
+const char * CHPNT_FOR_SORT = "-";
+const char  CH_FOR_SORT = '-';
+const char  CH_IP_DELIM = '.';
 
 #endif // COMMONTYPES_H
