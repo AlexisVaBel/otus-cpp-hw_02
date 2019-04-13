@@ -2,7 +2,6 @@
 #define COMMONTYPES_H
 #include <string>
 #include <vector>
-#include <tuple>
 
 
 // conventions for types - NameT
@@ -14,8 +13,10 @@ using StdVectorT = std::vector<T>;
 using IpVectorT     = std::vector<StdStrT>;
 using IpVectorsT    = std::vector<std::vector<StdStrT>>;
 
+using IntIpVectorT     = std::vector<int>;
+using IntIpVectorsT    = std::vector<std::vector<int>>;
 //
-const char * CHPNT_FOR_SORT = "-";
+const char * const CHPNT_FOR_SORT = "-";
 const char  CH_FOR_SORT = '-';
 const char  CH_IP_DELIM = '.';
 

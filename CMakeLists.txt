@@ -8,16 +8,15 @@ else ($ENV{TRAVIS_BUILD_NUMBER})
 endif ($ENV{TRAVIS_BUILD_NUMBER})
 
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Wpedantic -Wextra")
+
 
 include_directories(".")
 include_directories("./io")
-include_directories("./src")
-set(SRC_LIST main.cpp)
+set(SRC_LIST main.cpp ./io/ip_filter.cpp)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} ${SRC_LIST})
 
-add_executable(${PROJECT_NAME}_test ./tests/test_starter.cpp)
+#add_executable(${PROJECT_NAME}_test ./tests/test_starter.cpp)
 
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -27,14 +26,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 
-set_target_properties(${PROJECT_NAME}_test PROPERTIES
-    COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
-    INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
-)
-
-target_link_libraries(${PROJECT_NAME}_test
-    ${Boost_LIBRARIES}
-)
 
 
 install (TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
@@ -50,5 +41,5 @@ set(CPACK_PACKAGE_CONTACT alexisvabel@gmail.com)
 set(CPACK_DEBIAN_PACKAGE_SHLIDEPS ON)
 include(CPack)
 
-enable_testing()
-add_test(ip_sort_tests ${PROJECT_NAME}_test)
+#enable_testing()
+#add_test(ip_sort_tests ${PROJECT_NAME}_test)

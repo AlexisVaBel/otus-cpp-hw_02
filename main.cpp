@@ -1,42 +1,49 @@
 #include <cassert>
 #include <cstdlib>
+#include <algorithm>
 
 #include <iostream>
-#include <cstring>
 
+#include "io/io_filter.h"
 #include "commontypes.h"
 
-#include "io/ip_inout.h"
-#include "sort/ip_sort.h"
-#include "filter/ip_filter.h"
-
-
+// from documentation:
+//The less-than comparison (operator<) behaves as if using algorithm lexicographical_compare, which compares the elements
+// so we can use both
+// <> or (std::lexicographical_compare(fst.begin(),fst.end(),snd.begin(),snd.end()));
+struct lexicographical_desc_vct{
+    inline bool operator() (const IntIpVectorT& fst, const IntIpVectorT& snd){
+        return fst > snd;
+    }
+};
+//
 
 int main(int argc , char const *argv[] ){
-    try    {
-        //ip pool for lexicographical sort
+    try{
         // TODO reverse lexicographically sort
-        IpVectorsT ip_pool_base;
-        for(StdStrT line; std::getline(std::cin, line);){
-            auto v = split(line, '\t');
-            ip_pool_base.push_back(split(v.at(0), CH_IP_DELIM));
-        }        
-        std::sort(ip_pool_base.begin(),ip_pool_base.end(),lexicographical_desc_vct()); // some lexicographical desc. sorting
-        //~ip pool for lexicographical sort
+        IntIpVectorsT ip_pool = load_IntIpVectorT_stdin();
+        std::sort(ip_pool.begin(), ip_pool.end(), lexicographical_desc_vct() );
 
-        //representative ip pool
-        IpVectorsT ip_pool_working = getUnPrependedVector(ip_pool_base);
+        // print with '.' delimiter, to be captured with lambda
+        auto print_vct_with_delimiter = [](IntIpVectorT vct){
+            for(IntIpVectorT::const_iterator it = vct.cbegin(); it != vct.cend(); ++it){
+                if(it != vct.cbegin()) std::cout << ".";
+                std::cout << *it;
+            }
+            std::cout<< std::endl;
+        };
+        //~ print with '.' delimiter, to be captured with lambda
 
-        print_vct_of_vcts_out(ip_pool_working);
-        //~representative ip pool
+        auto print_vct_any_is_46        = [=](IntIpVectorT vct){if( std::find(vct.begin(), vct.end(), 46) != vct.end() ) print_vct_with_delimiter(vct);};
+        auto print_vct_first_is_one     = [=](IntIpVectorT vct){if( vct.at(0) == 1 ) print_vct_with_delimiter(vct);};
+        auto print_vct_first_46_next_70 = [=](IntIpVectorT vct){if( vct.at(0) == 46 && vct.at(1) == 70 ) print_vct_with_delimiter(vct);};
 
-        // TODO filter by first byte and output        
-        applyable_filter_print(f_byFirst_One       , ip_pool_working);
-        applyable_filter_print(f_byFirst46_Second70, ip_pool_working);
-        applyable_filter_print(f_byAny46           , ip_pool_working);
+        std::for_each(ip_pool.begin(), ip_pool.end(), print_vct_with_delimiter);
+        std::for_each(ip_pool.begin(), ip_pool.end(), print_vct_first_is_one);
+        std::for_each(ip_pool.begin(), ip_pool.end(), print_vct_first_46_next_70);
+        std::for_each(ip_pool.begin(), ip_pool.end(), print_vct_any_is_46);
     }
-    catch(const std::exception &e)
-    {
+    catch(const std::exception &e){
         std::cerr << e.what() << std::endl;
     }
 
