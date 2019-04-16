@@ -1,47 +1,32 @@
 #include <cassert>
-#include <cstdlib>
 #include <algorithm>
-
+#include <cstdarg>
 #include <iostream>
 
-#include "io/io_filter.h"
 #include "commontypes.h"
 
-// from documentation:
-//The less-than comparison (operator<) behaves as if using algorithm lexicographical_compare, which compares the elements
-// so we can use both
-// <> or (std::lexicographical_compare(fst.begin(),fst.end(),snd.begin(),snd.end()));
-struct lexicographical_desc_vct{
-    inline bool operator() (const IntIpVectorT& fst, const IntIpVectorT& snd){
-        return fst > snd;
-    }
-};
-//
+#include "io/ip_io.h"
+#include "filter/ip_filter.h"
+
+
 
 int main(int argc , char const *argv[] ){
     try{
         // TODO reverse lexicographically sort
         IntIpVectorsT ip_pool = load_IntIpVectorT_stdin();
-        std::sort(ip_pool.begin(), ip_pool.end(), lexicographical_desc_vct() );
+        std::sort(ip_pool.begin(), ip_pool.end(), std::greater<IntIpVectorT> () );
 
-        // print with '.' delimiter, to be captured with lambda
-        auto print_vct_with_delimiter = [](IntIpVectorT vct){
-            for(IntIpVectorT::const_iterator it = vct.cbegin(); it != vct.cend(); ++it){
-                if(it != vct.cbegin()) std::cout << ".";
-                std::cout << *it;
-            }
-            std::cout<< std::endl;
-        };
-        //~ print with '.' delimiter, to be captured with lambda
+        IntIpVectorsT ip_poolOnes   = get_ip_filter_first(ip_pool,1);
+        IntIpVectorsT ip_pool46_70  = get_ip_filter_first(ip_pool,46,70);
+        IntIpVectorsT ip_pool_any46 = get_ip_filter_any(ip_pool,46);
 
-        auto print_vct_any_is_46        = [=](IntIpVectorT vct){if( std::find(vct.begin(), vct.end(), 46) != vct.end() ) print_vct_with_delimiter(vct);};
-        auto print_vct_first_is_one     = [=](IntIpVectorT vct){if( vct.at(0) == 1 ) print_vct_with_delimiter(vct);};
-        auto print_vct_first_46_next_70 = [=](IntIpVectorT vct){if( vct.at(0) == 46 && vct.at(1) == 70 ) print_vct_with_delimiter(vct);};
 
-        std::for_each(ip_pool.begin(), ip_pool.end(), print_vct_with_delimiter);
-        std::for_each(ip_pool.begin(), ip_pool.end(), print_vct_first_is_one);
-        std::for_each(ip_pool.begin(), ip_pool.end(), print_vct_first_46_next_70);
-        std::for_each(ip_pool.begin(), ip_pool.end(), print_vct_any_is_46);
+
+        std::for_each(ip_pool.begin(), ip_pool.end(), print_vct);
+        std::for_each(ip_poolOnes.begin(), ip_poolOnes.end(), print_vct);
+        std::for_each(ip_pool46_70.begin(), ip_pool46_70.end(), print_vct);
+        std::for_each(ip_pool_any46.begin(), ip_pool_any46.end(), print_vct);
+
     }
     catch(const std::exception &e){
         std::cerr << e.what() << std::endl;

@@ -5,19 +5,17 @@
 
 
 // conventions for types - NameT
-using StdStrT    = std::string;
 
-template <typename T>
-using StdVectorT = std::vector<T>;
+//using StdStrT = std::string;
+// got some error with 'using'
+typedef std::string StdStrT;
 
-using IpVectorT     = std::vector<StdStrT>;
-using IpVectorsT    = std::vector<std::vector<StdStrT>>;
 
-using IntIpVectorT     = std::vector<int>;
-using IntIpVectorsT    = std::vector<std::vector<int>>;
+typedef  std::vector<StdStrT> IpVectorT;
+
+
+typedef std::vector<int>  IntIpVectorT;
+typedef std::vector<std::vector<int> > IntIpVectorsT;
 //
-const char * const CHPNT_FOR_SORT = "-";
-const char  CH_FOR_SORT = '-';
-const char  CH_IP_DELIM = '.';
 
 #endif // COMMONTYPES_H

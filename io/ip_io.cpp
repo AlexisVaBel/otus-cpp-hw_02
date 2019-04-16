@@ -1,8 +1,7 @@
-#include <cassert>
-#include <cstdlib>
+
 #include <iostream>
 
-#include "io_filter.h"
+#include "ip_io.h"
 
 
 
@@ -56,12 +55,11 @@ IntIpVectorsT load_IntIpVectorT_stdin(){
 }
 
 
-IpVectorsT load_IpVectorT_stdin(){
-    IpVectorsT r;
-    for(std::string line; std::getline(std::cin, line);){
-        std::vector<std::string> v = split(line, '\t');
-        r.push_back(split(v.at(0), '.'));
-    }
-    return r;
-}
 
+void print_vct(IntIpVectorT vct){
+    for(IntIpVectorT::const_iterator it = vct.cbegin(); it != vct.cend(); ++it){
+        if(it != vct.cbegin()) std::cout << ".";
+        std::cout << *it;
+    }
+    std::cout<< std::endl;
+}

@@ -1,6 +1,6 @@
 mkdir ./build
 cd ./build
-cmake ..
+CXX=clang++ CC=clang cmake ..
 make -j4
-#echo "starting tests"
-#./ip_filter_test
+echo "starting tests"
+./ip_filter_test
